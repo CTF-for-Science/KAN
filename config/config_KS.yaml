@@ -1,0 +1,27 @@
+dataset:
+  name: PDE_KS
+# pair_id omitted or set to 'all' to run on all sub-datasets
+
+model:
+  name: KAN
+  version: 1 
+  steps: 1000 
+  pred_window: 1
+  lag: 2
+  train_ratio: 0.9
+  batch: -1
+  lr: 0.01
+  optimizer: 'Adam' 
+  base_fun: 'silu' 
+  seed: 42
+  num_neurons: 3
+  one_d: 4
+  two_d: 4
+  three_d: 4
+  four_d: 2
+  five_d: 3
+  grid: 3
+  update_grid: True
+  k: 3
+  lamb:  0.00001
+  lamb_coef: 0.00001

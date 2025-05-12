@@ -1,0 +1,27 @@
+dataset: 
+  name: ODE_Lorenz
+# pair_id omitted or set to 'all' to run on all sub-datasets
+
+model:
+  name: KAN
+  version: 1 
+  steps: 2000 
+  pred_window: 1
+  lag: 4
+  train_ratio: 0.9
+  batch: -1
+  lr: 0.001
+  optimizer: 'Adam' 
+  base_fun: 'silu' 
+  seed: 42
+  grid: 3
+  update_grid: True
+  k: 3
+  lamb:  0.00001
+  lamb_coef: 0.00001
+  num_neurons: 3
+  one_d: 2
+  two_d: 2
+  three_d: 3
+  four_d: 2
+  five_d: 3
