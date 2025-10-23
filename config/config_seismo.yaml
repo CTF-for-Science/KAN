@@ -1,7 +1,7 @@
 dataset:
-  name: PDE_KS
+  name: seismo
   pair_id:
-  - 2
+# pair_id omitted or set to 'all' to run on all sub-datasets
 
 model:
   base_fun: silu
@@ -20,9 +20,11 @@ model:
   optimizer: Adam
   pred_window: 1
   seed: 42
-  steps: 800
-  three_dim: 4
-  train_ratio: 0.9
+  steps: 1000
+  three_dim: 5
+  train_ratio: 0.95
   two_dim: 4
   update_grid: true
   version: 1
+
+

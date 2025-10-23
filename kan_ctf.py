@@ -33,7 +33,8 @@ class KANctf:
         lamb (float): Overall penalty strength
         lamb_coef (float): Coefficient magnitude penalty strength
 
-        width (list): Number of neurons in each layer
+        num_layers (int): Number of inner layers
+        {one-five}_dim (int): Number of neurons in inner layers
         grid (int): Number of grid intervals 
         update_grid (bool): If True, update grid regularly before stop_grid_update_step (default -1)
         k (int): The order of piecewise polynomial for spline
@@ -76,12 +77,12 @@ class KANctf:
         input_layer = [self.n * max(self.lag,1)]
         output_layer = [self.n * self.prediction_window]
         inner_layer = [
-            config['model']['one_d'],
-            config['model']['two_d'],
-            config['model']['three_d'],
-            config['model']['four_d'],
-            config['model']['five_d'],
-            ][:config['model']['num_neurons']]
+            config['model']['one_dim'],
+            config['model']['two_dim'],
+            config['model']['three_dim'],
+            config['model']['four_dim'],
+            config['model']['five_dim'],
+            ][:config['model']['num_layers']]
         self.width = list(np.concatenate([input_layer, inner_layer, output_layer]))
         
         self.train_ratio = config['model']['train_ratio']
@@ -138,6 +139,7 @@ class KANctf:
         print('width', self.width) 
         data = self.get_data()
         model = KAN(width= self.width, grid=self.grid, k=self.k, seed=self.seed, device= self.device, base_fun = self.base_fun)
+        model.to(self.device)
         model.fit(
             dataset = data,
             lamb_coef = self.lamb_coef,
@@ -153,7 +155,7 @@ class KANctf:
         return model
     
     def predict(self):
-        """
+        """K
         Generate predictions based on the KAN model
         """
         model = self.train()
@@ -161,16 +163,16 @@ class KANctf:
         init_data = self.init_data.T
   
         if self.pair_id == 2 or self.pair_id ==4:
-            input = torch.tensor(init_data).type(self.dtype)
+            input = torch.tensor(init_data).type(self.dtype).to(self.device)
             print(f'------------ Working on Prediction for Pair ID {self.pair_id}------------')
             with torch.no_grad():
-                prediction = model(input).numpy()
+                prediction = model(input).cpu().numpy()
         else:
             print(f'------------ Working on Prediction for Pair ID {self.pair_id}------------')    
             for i in range(self.prediction_horizon_steps):                
-                input = torch.tensor(init_data.reshape(1,-1)).type(self.dtype)
+                input = torch.tensor(init_data.reshape(1,-1)).type(self.dtype).to(self.device)
                 with torch.no_grad():
-                    pred = model(input).numpy()[0]              
+                    pred = model(input).cpu().numpy()[0]              
                 prediction[i,:] = pred[:self.n]
                 init_data = np.vstack([init_data[1:,:], pred[:self.n].reshape(1,self.n)])
 
